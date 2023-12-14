@@ -1,9 +1,11 @@
-import pandas as pd
+#with PCA
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_squared_error
 from statsmodels.stats.outliers_influence import variance_inflation_factor
@@ -55,9 +57,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Step 5: Build a regression model with a pipeline for preprocessing
 
-# Create a pipeline with preprocessing steps and the regression model
+# Create a pipeline with preprocessing steps, including PCA, and the regression model
 model = Pipeline([
     ('scaler', StandardScaler()),  # Standardize features
+    ('pca', PCA(n_components=3)),  # Apply PCA
     ('regression', LinearRegression())  # Linear Regression model
 ])
 
@@ -70,7 +73,14 @@ y_pred = model.predict(X_test)
 # Step 8: Evaluate the model (you can use other metrics as well)
 mse = mean_squared_error(y_test, y_pred)
 print(f'Mean Squared Error: {mse}')
+y_pred = model.predict(X_test)
 
+# Step 8: Evaluate the model (you can use other metrics as well)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)  # Calculate RMSE
+
+print(f'Mean Squared Error: {mse}')
+print(f'Root Mean Squared Error: {rmse}')
 # Additional: Check for multicollinearity using Variance Inflation Factor (VIF)
 def calculate_vif(data):
     vif_data = pd.DataFrame()
